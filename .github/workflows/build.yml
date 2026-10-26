@@ -22,42 +22,16 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Create Android project scaffolding
-        run: |
-          flutter create --platforms=android --project-name=future_clock .
-          mkdir -p assets/icon
+      - name: Create Android scaffolding
+        run: flutter create --platforms=android --project-name=future_clock .
 
-      - name: Move custom icon
-        run: |
-          if [ -f app_icon.png ]; then
-            mv app_icon.png assets/icon/app_icon.png
-          fi
-
-      - name: Update Launcher Icon Configuration & Pubspec
-        run: |
-          cat <<EOT >> pubspec.yaml
-
-dev_dependencies:
-  flutter_launcher_icons: ^0.13.1
-
-flutter_launcher_icons:
-  android: true
-  ios: false
-  image_path: "assets/icon/app_icon.png"
-
-flutter:
-  assets:
-    - assets/icon/app_icon.png
-EOT
-
-      - name: Generate App Icons
+      - name: Setup App Icon
         run: |
           flutter pub get
-          dart run flutter_launcher_icons
+          flutter pub run flutter_launcher_icons
 
-      - name: Override App Display Name to F_clock
-        run: |
-          sed -i 's/android:label="future_clock"/android:label="F_clock"/g' android/app/src/main/AndroidManifest.xml
+      - name: Set App Name to F_clock
+        run: sed -i 's/android:label="future_clock"/android:label="F_clock"/g' android/app/src/main/AndroidManifest.xml
 
       - name: Build APK
         run: flutter build apk --release
